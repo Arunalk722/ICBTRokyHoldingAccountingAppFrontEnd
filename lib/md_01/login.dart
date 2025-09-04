@@ -39,6 +39,40 @@ class _LoginAppState extends State<LoginApp> {
     await prefs.clear();
   }
 
+  Future<void> _loadAPIVersionAndValidate() async {
+    try {
+      String reqUrl = "${APIHost().apiURL}/info.php";
+      PD.pd(text: reqUrl);
+      final response = await http.get(
+        Uri.parse(reqUrl),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      );
+      PD.pd(text: reqUrl);
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+        PD.pd(text: responseData.toString());
+
+        if (responseData['status'] == 200) {
+          String apiVersion = responseData['BUILD_VERSION'] ?? "Unknown";
+          APIInfo.setAPI(apiVersion);
+        } else {
+          APIInfo.setAPI("Unknown");
+        }
+      } else {
+        APIInfo.setAPI("Unknown");
+      }
+    } catch (e, st) {
+      ExceptionLogger.logToError(
+          message: e.toString(),
+          errorLog: st.toString(),
+          logFile: 'login.dart');
+
+      APIInfo.setAPI("Unknown");
+    }
+  }
+
   Future<void> loginSystem() async {
     WaitDialog.showWaitDialog(context, message: 'Login');
 
@@ -141,6 +175,26 @@ class _LoginAppState extends State<LoginApp> {
 
   Future<void> autoLogin() async {
     WaitDialog.showWaitDialog(context, message: 'Login');
+    await _loadAPIVersionAndValidate();
+    if (APIInfo.getAPI() != APIHost().appVersion) {
+      WaitDialog.hideDialog(context);
+      if (kIsWeb) {
+        clearSharedPreferences();
+        openWebPage();
+      } else {
+        OneBtnDialog.oneButtonDialog(
+          context,
+          title: 'Invalid App Version',
+          message:
+              'For security reasons, we have restricted logins from invalid app versions. If you see this error, try the following:\n\n1. If you are trying to log in using a web browser, clear your cache.\n2. Use private browsing mode.\n\nIf the issue persists, please contact support.',
+          btnName: 'Ok',
+          icon: Icons.restart_alt,
+          iconColor: Colors.red,
+          btnColor: Colors.black,
+        );
+      }
+      return;
+    }
 
     final prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('token');

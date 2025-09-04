@@ -1,19 +1,23 @@
 import 'package:url_launcher/url_launcher.dart';
 
 class APIHost {
-   final String apiURL = 'http://localhost:8002/RokyWebApp/public/apis/controllers';
-   //   final String apiURL = 'https://apps.api.rokyholdings.com/RN/public/apis/controllers';
+  final String apiURL =
+      'http://localhost:8002/RokyWebApp/public/apis/controllers';
+  //   final String apiURL = 'https://apps.api.rokyholdings.com/RN/public/apis/controllers';
   final String appVersion = '4.0.1';
 }
-class APIInfo{
-  static String _apiVersion='';
-  static void setAPI(String val){
-    _apiVersion=val;
+
+class APIInfo {
+  static String _apiVersion = '';
+  static void setAPI(String val) {
+    _apiVersion = val;
   }
-  static String getAPI(){
+
+  static String getAPI() {
     return _apiVersion;
   }
 }
+
 class APIToken {
   String? _token;
   APIToken._privateConstructor();
@@ -22,20 +26,21 @@ class APIToken {
   factory APIToken() {
     return _instance;
   }
-  
+
   set token(String value) => _token = value;
   String get token => _token.toString();
 }
+
 Future<void> openWebPage() async {
   final Uri uri = Uri.parse('https://apps.rokyholdings.com/app_clear.html');
   if (await canLaunchUrl(uri)) {
     await launchUrl(uri, mode: LaunchMode.externalApplication);
-  } else {
-  }
-}
-class HttpHeader{
-  final header={"x-token": "Bearer ${APIToken().token}",
-    "Content-Type": "application/json",};
+  } else {}
 }
 
-
+class HttpHeader {
+  final header = {
+    "x-token": "Bearer ${APIToken().token}",
+    "Content-Type": "application/json",
+  };
+}

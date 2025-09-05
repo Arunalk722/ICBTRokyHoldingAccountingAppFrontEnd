@@ -497,5 +497,5 @@ This user guide reflects the actual functionality available in the Roky Holding 
 ---
 
 **Document Version**: 1.0  
-**Based on Code Analysis**: August 2025  
 **Document Owner**: K.L Aruna Shantha
+

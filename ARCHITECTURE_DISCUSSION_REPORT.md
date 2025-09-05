@@ -338,6 +338,6 @@ The Roky Holding application demonstrates a well-structured client-server archit
 
 ---
 
-**Based on Code Analysis**: August 2025  
 **Architecture Version**: 1.0  
+
 
